@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Gastos diarios → Excel</title>
+    <meta
+      name="description"
+      content="Registra tus gastos diarios y descarga un Excel (.xlsx) directamente desde el navegador."
+    />
+    <link rel="stylesheet" href="./assets/styles.css" />
+
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script defer src="./assets/app.js"></script>
+  </head>
+
+  <body class="app">
+    <a class="app__skip-link" href="#contenido">Saltar al contenido</a>
+
+    <header class="app__header">
+      <div class="app__container">
+        <div class="app__brand" aria-label="Gastos diarios a Excel">
+          <span class="app__brand-title">Gastos diarios</span>
+          <span class="app__brand-subtitle">Exportar a Excel (.xlsx)</span>
+        </div>
+
+        <nav class="app__nav" aria-label="Acciones">
+          <button
+            class="button button--primary"
+            type="button"
+            data-action="export-xlsx"
+          >
+            Descargar Excel
+          </button>
+          <button
+            class="button button--ghost"
+            type="button"
+            data-action="reset-all"
+          >
+            Reiniciar
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="contenido" class="app__main">
+      <div class="app__container app__grid">
+        <section class="card" aria-labelledby="titulo-form">
+          <header class="card__header">
+            <h1 id="titulo-form" class="card__title">Registrar un gasto</h1>
+            <p class="card__subtitle">
+              Agrega filas y luego descarga tu Excel cuando quieras.
+            </p>
+          </header>
+
+          <form class="expense-form" data-form="expense">
+            <div class="expense-form__row">
+              <div class="field">
+                <label class="field__label" for="fecha">Fecha</label>
+                <input
+                  class="field__control"
+                  id="fecha"
+                  name="fecha"
+                  type="date"
+                  required
+                />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="categoria">Categoría</label>
+                <input
+                  class="field__control"
+                  id="categoria"
+                  name="categoria"
+                  type="text"
+                  autocomplete="off"
+                  inputmode="text"
+                  placeholder="Comida, Transporte, Hogar…"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="expense-form__row">
+              <div class="field">
+                <label class="field__label" for="descripcion">Descripción</label>
+                <input
+                  class="field__control"
+                  id="descripcion"
+                  name="descripcion"
+                  type="text"
+                  autocomplete="off"
+                  inputmode="text"
+                  placeholder="Ej: supermercado"
+                />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="metodo">Método de pago</label>
+                <select class="field__control" id="metodo" name="metodo">
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Débito">Débito</option>
+                  <option value="Crédito">Crédito</option>
+                  <option value="Transferencia">Transferencia</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="expense-form__row expense-form__row--last">
+              <div class="field">
+                <label class="field__label" for="monto">Monto</label>
+                <div class="field__money">
+                  <span class="field__prefix" aria-hidden="true">$</span>
+                  <input
+                    class="field__control field__control--money"
+                    id="monto"
+                    name="monto"
+                    type="number"
+                    inputmode="decimal"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="expense-form__actions">
+                <button class="button button--secondary" type="submit">
+                  Agregar a la tabla
+                </button>
+              </div>
+            </div>
+
+            <p class="sr-only" id="ayuda-export">
+              Para descargar tu Excel, usa el botón “Descargar Excel”.
+            </p>
+          </form>
+        </section>
+
+        <section class="card" aria-labelledby="titulo-tabla">
+          <header class="card__header card__header--row">
+            <div>
+              <h2 id="titulo-tabla" class="card__title">Tus gastos</h2>
+              <p class="card__subtitle">
+                Total actual: <strong data-role="total">$0.00</strong>
+              </p>
+            </div>
+
+            <div class="card__header-actions">
+              <button
+                class="button button--ghost"
+                type="button"
+                data-action="add-empty-row"
+              >
+                Agregar fila vacía
+              </button>
+            </div>
+          </header>
+
+          <div class="table-wrap" role="region" aria-label="Tabla de gastos">
+            <table class="table" aria-describedby="ayuda-export">
+              <thead class="table__head">
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Categoría</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Método</th>
+                  <th scope="col" class="table__num">Monto</th>
+                  <th scope="col" class="table__actions">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="table__body" data-role="rows"></tbody>
+            </table>
+          </div>
+
+          <footer class="card__footer">
+            <div
+              class="notice"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              data-role="notice"
+            ></div>
+          </footer>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app__footer">
+      <div class="app__container">
+        <p class="app__footer-text">
+          Hecho para registrar gastos y exportar a Excel sin instalar nada.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
